@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Freno</string>
+    <string name="accessibility_label">Freno — monitoreo de apps</string>
+    <string name="widget_description">Estado de tokens y bloqueos de Freno</string>
+</resources>

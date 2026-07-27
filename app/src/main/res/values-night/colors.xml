@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Escala de grises para modo oscuro. -->
+    <color name="freno_bg">#FF121212</color>
+    <color name="freno_surface">#FF1E1E1E</color>
+    <color name="freno_text">#FFEDEDED</color>
+    <color name="freno_muted">#FF9A9A9A</color>
+    <color name="freno_line">#FF333333</color>
+    <color name="freno_block_bg">#FF000000</color>
+    <color name="freno_icon_bg">#FF4A4A4A</color>
+    <color name="freno_widget_bg">#FF1E1E1E</color>
+</resources>
