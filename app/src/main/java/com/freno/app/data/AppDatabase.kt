@@ -27,7 +27,7 @@ import com.freno.app.data.entity.TargetRuntimeState
         PendingChange::class,
         FeatureSignature::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

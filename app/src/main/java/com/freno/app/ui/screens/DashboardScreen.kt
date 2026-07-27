@@ -170,6 +170,9 @@ private fun TargetStatusRow(st: TargetUiStatus, onClick: () -> Unit) {
             if (st.type == TargetType.FEATURE && st.scrollQuota != null) {
                 append("\nScroll: ${st.scrollCount} / ${st.scrollQuota}")
             }
+            if (st.sessionLimitMin != null) {
+                append("\nSesión: ${st.sessionMinutes} / ${st.sessionLimitMin} min")
+            }
             if (st.blocked && st.availableAgainAt != null) {
                 append("\n${reasonShort(st.reason)} · vuelve a las ${TimeUtils.formatClock(st.availableAgainAt)}")
             }
@@ -181,6 +184,7 @@ private fun TargetStatusRow(st: TargetUiStatus, onClick: () -> Unit) {
 private fun reasonShort(reason: BlockReason): String = when (reason) {
     BlockReason.SCHEDULE -> "Horario"
     BlockReason.COOLDOWN -> "Cooldown"
+    BlockReason.SESSION_LIMIT -> "Límite por sesión"
     BlockReason.OPEN_LIMIT -> "Límite de aperturas"
     BlockReason.TIME_LIMIT -> "Límite de tiempo"
     BlockReason.SCROLL_QUOTA -> "Cuota de scroll"

@@ -13,7 +13,9 @@ data class TargetUiStatus(
     val opens: Int,
     val tokensSpent: Int,
     val scrollCount: Int,
-    val scrollQuota: Int?
+    val scrollQuota: Int?,
+    val sessionMinutes: Long,
+    val sessionLimitMin: Int?
 )
 
 /** Instantánea global para el dashboard. */

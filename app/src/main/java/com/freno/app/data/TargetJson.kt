@@ -19,6 +19,7 @@ object TargetJson {
         put("perMinuteCostTokens", t.perMinuteCostTokens)
         put("perScrollCost", t.perScrollCost)
         put("dailyTimeLimitMin", t.dailyTimeLimitMin ?: JSONObject.NULL)
+        put("sessionLimitMin", t.sessionLimitMin ?: JSONObject.NULL)
         put("dailyOpenLimit", t.dailyOpenLimit ?: JSONObject.NULL)
         put("cooldownMin", t.cooldownMin ?: JSONObject.NULL)
         put("scheduleStart", t.scheduleStart ?: JSONObject.NULL)
@@ -42,6 +43,7 @@ object TargetJson {
             perMinuteCostTokens = o.getInt("perMinuteCostTokens"),
             perScrollCost = o.getInt("perScrollCost"),
             dailyTimeLimitMin = intOrNull("dailyTimeLimitMin"),
+            sessionLimitMin = intOrNull("sessionLimitMin"),
             dailyOpenLimit = intOrNull("dailyOpenLimit"),
             cooldownMin = intOrNull("cooldownMin"),
             scheduleStart = intOrNull("scheduleStart"),

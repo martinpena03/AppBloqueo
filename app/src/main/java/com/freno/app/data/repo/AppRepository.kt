@@ -115,7 +115,15 @@ class AppRepository(
         if (!target.enabled) return BlockDecision.Allow
         val date = day.dateKey
         val stat = ensureStat(targetId, date)
-        val runtime = ensureRuntime(targetId)
+        val stored = ensureRuntime(targetId)
+
+        // ¿Empieza una sesión nueva? Solo si estuvo fuera al menos el cooldown (o el hueco por defecto).
+        // Así cerrar y reabrir de inmediato no reinicia el límite por sesión.
+        val gapMin = target.cooldownMin ?: BlockPolicy.DEFAULT_SESSION_GAP_MIN
+        val newSession = stored.lastClosedAt == 0L || now() - stored.lastClosedAt >= gapMin * 60_000L
+        val runtime = if (newSession && stored.sessionSeconds > 0) {
+            stored.copy(sessionSeconds = 0).also { runtimeDao.upsert(it) }
+        } else stored
 
         val decision = BlockPolicy.evaluate(target, stat, runtime, day, now(), isOpening = true)
         if (decision is BlockDecision.Block) {
@@ -144,7 +152,11 @@ class AppRepository(
         val target = targetDao.getById(targetId) ?: return BlockDecision.Allow
         val date = day.dateKey
         val stat = ensureStat(targetId, date)
-        val runtime = ensureRuntime(targetId)
+        val stored = ensureRuntime(targetId)
+
+        // Acumula el tiempo de la sesión continua actual.
+        val runtime = stored.copy(sessionSeconds = stored.sessionSeconds + elapsedSeconds)
+        runtimeDao.upsert(runtime)
 
         // Cobro por minutos completos acumulados.
         val acc = (secondsAccum[targetId] ?: 0) + elapsedSeconds
@@ -237,7 +249,9 @@ class AppRepository(
                 opens = stat.opensCount,
                 tokensSpent = stat.tokensSpent,
                 scrollCount = stat.scrollCount,
-                scrollQuota = t.scrollQuota
+                scrollQuota = t.scrollQuota,
+                sessionMinutes = rt.sessionSeconds / 60,
+                sessionLimitMin = t.sessionLimitMin
             )
         }
         return DashboardSnapshot(

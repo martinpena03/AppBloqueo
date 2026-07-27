@@ -22,6 +22,8 @@ data class MonitoredTarget(
     val perMinuteCostTokens: Int = 1,
     val perScrollCost: Int = 0,
     val dailyTimeLimitMin: Int? = null,
+    /** Uso máximo continuo por sesión, en minutos. Al agotarse se bloquea y arranca el cooldown. */
+    val sessionLimitMin: Int? = null,
     val dailyOpenLimit: Int? = null,
     val cooldownMin: Int? = null,
     val scheduleStart: Int? = null,
@@ -48,7 +50,9 @@ data class TargetRuntimeState(
     @PrimaryKey val targetId: String,
     val lastClosedAt: Long = 0,
     val isForeground: Boolean = false,
-    val quotaBlockedUntil: Long = 0
+    val quotaBlockedUntil: Long = 0,
+    /** Segundos usados en la sesión continua actual; se reinicia cuando arranca una sesión nueva. */
+    val sessionSeconds: Long = 0
 )
 
 /** Estado global del presupuesto de tokens (fila única id=0). */

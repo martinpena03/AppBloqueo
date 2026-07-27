@@ -66,7 +66,8 @@ interface RuntimeDao {
     @Upsert
     suspend fun upsert(state: TargetRuntimeState)
 
-    @Query("UPDATE runtime_state SET quotaBlockedUntil = 0")
+    /** Reinicio diario: libera los bloqueos por cuota y cierra cualquier sesión en curso. */
+    @Query("UPDATE runtime_state SET quotaBlockedUntil = 0, sessionSeconds = 0")
     suspend fun clearAllQuotaBlocks()
 
     @Query("UPDATE runtime_state SET isForeground = 0")

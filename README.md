@@ -1,9 +1,9 @@
 # Freno
 
 App Android **anti-dopamina** para reducir el uso de redes sociales y apps adictivas. Estricta pero muy
-personalizable: sistema de **tokens** (presupuesto diario), reglas por app (tiempo, cooldown, horario,
-aperturas) y **bloqueo del scroll infinito en Reels/Shorts** (cuota configurable). UI minimalista en escala
-de grises. Todo funciona **100% en tu teléfono**, sin servidores.
+personalizable: sistema de **tokens** (presupuesto diario), reglas por app (tiempo diario, **uso máximo por
+sesión**, cooldown, horario, aperturas) y **bloqueo del scroll infinito en Reels/Shorts** (cuota
+configurable). UI minimalista en escala de grises. Todo funciona **100% en tu teléfono**, sin servidores.
 
 > ⚠️ Realidad técnica: Android no permite "solo ejecutar código". Hay que **compilar un APK** e instalarlo,
 > y conceder permisos especiales (Accesibilidad, Superposición). El bloqueo no "mata" otras apps: detecta la
@@ -57,8 +57,12 @@ Luego, desde el **Dashboard** → **Agregar**, elige apps o funciones (Reels/Sho
 - **Tokens (presupuesto global):** cada día tienes un presupuesto (def. 60). Abrir una app cuesta tokens y
   cada minuto consume tokens (costos configurables por app). Al llegar a 0, se bloquean todas las apps
   monitoreadas hasta el reinicio diario.
-- **Reglas duras por app:** horario, cooldown, límite de aperturas y de tiempo. Cualquiera que se cumpla
-  bloquea la app, incluso si quedan tokens.
+- **Reglas duras por app:** horario, cooldown, uso máximo por sesión, límite de aperturas y de tiempo diario.
+  Cualquiera que se cumpla bloquea la app, incluso si quedan tokens. Todas son opcionales e independientes.
+- **Uso máximo por sesión:** una sesión es un uso continuo. Si pones 10 min en Instagram, a los 10 min
+  aparece la pantalla de bloqueo y **arranca el cooldown**. Para empezar una sesión nueva hay que estar fuera
+  de la app el tiempo del cooldown (o 5 min si no configuraste cooldown), así que cerrar y reabrir de
+  inmediato **no** reinicia el contador.
 - **Reels/Shorts:** al detectar el feed de scroll infinito, se cuentan los swipes. Tras la cuota (def. 5),
   el feed se bloquea durante la ventana de uso (hasta el reinicio, o unas horas si lo configuras). El resto
   de la app sigue usable.

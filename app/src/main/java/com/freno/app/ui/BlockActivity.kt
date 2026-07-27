@@ -142,6 +142,7 @@ private fun BlockScreen(
 private fun reasonText(reason: BlockReason): String = when (reason) {
     BlockReason.SCHEDULE -> "Fuera del horario permitido."
     BlockReason.COOLDOWN -> "En periodo de enfriamiento."
+    BlockReason.SESSION_LIMIT -> "Alcanzaste el máximo de uso por sesión."
     BlockReason.OPEN_LIMIT -> "Alcanzaste el máximo de aperturas de hoy."
     BlockReason.TIME_LIMIT -> "Alcanzaste el tiempo máximo de hoy."
     BlockReason.SCROLL_QUOTA -> "Alcanzaste tu cuota de reels/shorts."

@@ -54,6 +54,8 @@ fun TargetConfigScreen(vm: MainViewModel, targetId: String, onBack: () -> Unit) 
 
     var timeLimitOn by remember { mutableStateOf(false) }
     var timeLimit by remember { mutableStateOf("30") }
+    var sessionLimitOn by remember { mutableStateOf(false) }
+    var sessionLimit by remember { mutableStateOf("10") }
     var openLimitOn by remember { mutableStateOf(false) }
     var openLimit by remember { mutableStateOf("5") }
     var cooldownOn by remember { mutableStateOf(false) }
@@ -74,6 +76,8 @@ fun TargetConfigScreen(vm: MainViewModel, targetId: String, onBack: () -> Unit) 
         quotaHours = t.quotaWindowHours.toString()
         timeLimitOn = t.dailyTimeLimitMin != null
         timeLimit = (t.dailyTimeLimitMin ?: 30).toString()
+        sessionLimitOn = t.sessionLimitMin != null
+        sessionLimit = (t.sessionLimitMin ?: 10).toString()
         openLimitOn = t.dailyOpenLimit != null
         openLimit = (t.dailyOpenLimit ?: 5).toString()
         cooldownOn = t.cooldownMin != null
@@ -125,6 +129,18 @@ fun TargetConfigScreen(vm: MainViewModel, targetId: String, onBack: () -> Unit) 
                 SwitchRow("Límite de tiempo diario", timeLimitOn) { timeLimitOn = it }
                 if (timeLimitOn) NumberField("Minutos por día", timeLimit) { timeLimit = it }
 
+                SwitchRow("Uso máximo por sesión", sessionLimitOn) { sessionLimitOn = it }
+                if (sessionLimitOn) {
+                    NumberField("Minutos por sesión", sessionLimit) { sessionLimit = it }
+                    val gap = cooldown.toIntOrNull()?.takeIf { cooldownOn } ?: 5
+                    Text(
+                        "Al agotarse se bloquea y empieza el cooldown. Para iniciar una sesión nueva " +
+                            "hay que estar $gap min fuera de la app.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
                 SwitchRow("Límite de aperturas diarias", openLimitOn) { openLimitOn = it }
                 if (openLimitOn) NumberField("Aperturas por día", openLimit) { openLimit = it }
 
@@ -154,6 +170,7 @@ fun TargetConfigScreen(vm: MainViewModel, targetId: String, onBack: () -> Unit) 
                         quotaWindow = if (quotaCooldown) QuotaWindow.COOLDOWN else QuotaWindow.UNTIL_RESET,
                         quotaWindowHours = quotaHours.toIntOrNull() ?: 2,
                         dailyTimeLimitMin = if (timeLimitOn) timeLimit.toIntOrNull() else null,
+                        sessionLimitMin = if (sessionLimitOn) sessionLimit.toIntOrNull() else null,
                         dailyOpenLimit = if (openLimitOn) openLimit.toIntOrNull() else null,
                         cooldownMin = if (cooldownOn) cooldown.toIntOrNull() else null,
                         scheduleStart = if (schedOn) schedStart.toIntOrNull()?.coerceIn(0, 1439) else null,

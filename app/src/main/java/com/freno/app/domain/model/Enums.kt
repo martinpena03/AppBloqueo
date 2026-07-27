@@ -11,6 +11,7 @@ enum class BlockReason {
     NONE,
     SCHEDULE,
     COOLDOWN,
+    SESSION_LIMIT,
     OPEN_LIMIT,
     TIME_LIMIT,
     SCROLL_QUOTA,

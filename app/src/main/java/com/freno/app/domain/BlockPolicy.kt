@@ -12,7 +12,8 @@ import com.freno.app.domain.util.TimeUtils
 
 /**
  * Función pura de decisión. No muta estado.
- * Orden (modelo híbrido): reglas duras primero, luego cuota de scroll, luego tokens globales.
+ * Orden (modelo híbrido): reglas duras primero (horario, cooldown, sesión), luego límites diarios,
+ * luego cuota de scroll y por último los tokens globales.
  * @param isOpening true cuando se evalúa al abrir (activa cooldown, límite de aperturas y costo de apertura).
  */
 object BlockPolicy {
@@ -47,19 +48,29 @@ object BlockPolicy {
             if (now < until) return BlockDecision.Block(BlockReason.COOLDOWN, until, name)
         }
 
-        // 3. Máximo de aperturas por día (solo al abrir).
+        // 3. Uso máximo por sesión (regla dura). Al agotarse, la espera es el cooldown
+        //    (o el hueco por defecto si no hay cooldown configurado).
+        val sessionLimit = t.sessionLimitMin
+        if (sessionLimit != null && rt.sessionSeconds / 60 >= sessionLimit) {
+            val waitMin = t.cooldownMin ?: DEFAULT_SESSION_GAP_MIN
+            // Durante el tick lastClosedAt aún es antiguo => la espera arranca ahora.
+            val base = maxOf(rt.lastClosedAt, now)
+            return BlockDecision.Block(BlockReason.SESSION_LIMIT, base + waitMin * 60_000L, name)
+        }
+
+        // 4. Máximo de aperturas por día (solo al abrir).
         val openLimit = t.dailyOpenLimit
         if (isOpening && openLimit != null && stat.opensCount >= openLimit) {
             return BlockDecision.Block(BlockReason.OPEN_LIMIT, nextReset, name)
         }
 
-        // 4. Tiempo total por día.
+        // 5. Tiempo total por día.
         val timeLimit = t.dailyTimeLimitMin
         if (timeLimit != null && stat.usedSeconds / 60 >= timeLimit) {
             return BlockDecision.Block(BlockReason.TIME_LIMIT, nextReset, name)
         }
 
-        // 5. Cuota de scroll (Reels/Shorts).
+        // 6. Cuota de scroll (Reels/Shorts).
         if (t.type == TargetType.FEATURE) {
             val quota = t.scrollQuota
             if (rt.quotaBlockedUntil > now) {
@@ -74,7 +85,7 @@ object BlockPolicy {
             }
         }
 
-        // 6. Tokens globales.
+        // 7. Tokens globales.
         if (day.remainingTokens <= 0) {
             return BlockDecision.Block(BlockReason.NO_TOKENS, nextReset, name)
         }
@@ -84,4 +95,10 @@ object BlockPolicy {
 
         return BlockDecision.Allow
     }
+
+    /**
+     * Minutos que hay que estar fuera del objetivo para que empiece una sesión nueva
+     * cuando no hay cooldown configurado. Evita que cerrar y reabrir reinicie el límite por sesión.
+     */
+    const val DEFAULT_SESSION_GAP_MIN = 5
 }

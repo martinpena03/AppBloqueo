@@ -30,8 +30,9 @@ object Restrictiveness {
         if (new.perMinuteCostTokens < old.perMinuteCostTokens) return false
         if (new.perScrollCost < old.perScrollCost) return false
 
-        // Límites (tiempo, aperturas, cuota de scroll): menor = más restrictivo.
+        // Límites (tiempo diario, sesión, aperturas, cuota de scroll): menor = más restrictivo.
         if (limitScore(new.dailyTimeLimitMin) > limitScore(old.dailyTimeLimitMin)) return false
+        if (limitScore(new.sessionLimitMin) > limitScore(old.sessionLimitMin)) return false
         if (limitScore(new.dailyOpenLimit) > limitScore(old.dailyOpenLimit)) return false
         if (limitScore(new.scrollQuota) > limitScore(old.scrollQuota)) return false
 
