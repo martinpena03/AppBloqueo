@@ -138,12 +138,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun cancelPending(change: PendingChange) = viewModelScope.launch { repo.cancelPending(change) }
 
-    /** Aplica los cambios diferidos que ya vencieron (al abrir la app). */
-    fun applyDue() = viewModelScope.launch { repo.applyDuePendingChanges() }
-
+    /** Reinicio diario perezoso + aplica los cambios diferidos que ya vencieron (al abrir la app). */
     fun applyDue() = viewModelScope.launch {
-        repo.applyDuePendingChanges()
         repo.ensureDayState()
+        repo.applyDuePendingChanges()
     }
 
     suspend fun verifyPin(pin: String): Boolean = settings.verifyPin(pin)
